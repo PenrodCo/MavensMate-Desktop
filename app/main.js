@@ -8,7 +8,7 @@ var shell           = require('shell');
 var mavensmate      = require('mavensmate');
 var ipc             = require('ipc');
 var GitHubReleases  = require('./github');
-
+var gh_releases     = require('electron-gh-releases');
 // TODO: (issue #8)
 // autoUpdater.setFeedUrl('http://mycompany.com/myapp/latest?version=' + app.getVersion());
 
@@ -357,22 +357,63 @@ var checkForUpdates = function() {
   return new Promise(function(resolve, reject) {
     console.log('checking for updates ...');
     var options = {
-      repo: 'joeferraro/mavensmate-app',
-      currentVersion: app.getVersion()
-    };
-    var updateChecker = new GitHubReleases(options);
-    updateChecker.check()
-      .then(function(updateCheckResult) {
-        console.log('update check result: ', updateCheckResult);
-        if (updateCheckResult && updateCheckResult.needsUpdate) {
-          mainWindow.webContents.send('needsUpdate', updateCheckResult);
-        }
-        resolve();
-      })
-      .catch(function(err) {
-        console.error(err);
-        reject(err);
+      repo: 'joeferraro/MavensMate-app',
+      //currentVersion: app.getVersion()
+      currentVersion: 'v0.0.1'
+    }
+
+    var update = new gh_releases(options, function (auto_updater) {
+      // Auto updater event listener
+      auto_updater.on('update-downloaded', function (e, rNotes, rName, rDate, uUrl, quitAndUpdate) {
+        // Install the update
+        // quitAndUpdate()
+        console.log('UPDATED!!!');
+        console.log(e);
+        console.log(rNotes);
+        console.log(rDate);
+        console.log(uUrl);
+        console.log(quitAndUpdate);
       });
+
+      auto_updater.on('checking-for-update', function(e) {
+        console.log('checking-for-update', e);
+      });
+
+      auto_updater.on('update-available', function(e) {
+        console.log('update-available', e);
+      });
+
+      auto_updater.on('update-not-available', function(e) {
+        console.log('update-not-available', e);
+      });
+    });
+
+    // Check for updates
+    update.check(function (err, status) {
+      if (!err && status) {
+        update.download()
+      } else {
+        console.log(err);
+        console.log(status);
+      }
+    });
+    // var options = {
+    //   repo: 'joeferraro/mavensmate-app',
+    //   currentVersion: app.getVersion()
+    // };
+    // var updateChecker = new GitHubReleases(options);
+    // updateChecker.check()
+    //   .then(function(updateCheckResult) {
+    //     console.log('update check result: ', updateCheckResult);
+    //     if (updateCheckResult && updateCheckResult.needsUpdate) {
+    //       mainWindow.webContents.send('needsUpdate', updateCheckResult);
+    //     }
+    //     resolve();
+    //   })
+    //   .catch(function(err) {
+    //     console.error(err);
+    //     reject(err);
+    //   });
   });
 };
 
