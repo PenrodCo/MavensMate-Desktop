@@ -357,7 +357,7 @@ var checkForUpdates = function() {
   return new Promise(function(resolve, reject) {
     console.log('checking for updates ...');
     var options = {
-      repo: 'joeferraro/MavensMate-app',
+      repo: 'joeferraro/MavensMate-app/tree/auto-update',
       //currentVersion: app.getVersion()
       currentVersion: 'v0.0.1'
     }
