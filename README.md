@@ -1,3 +1,5 @@
+NOTE: This has been forked from Joe Ferraro's GitHub repo to ensure Penrod's abilities to research and develop the open source MavensMate GUI.
+
 # MavensMate Desktop
 
 | Platform | Status |
